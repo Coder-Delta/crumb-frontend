@@ -1868,6 +1868,7 @@ img {
 .auth-modal {
   width: min(790px, 100%);
   min-height: 510px;
+  max-height: 92vh;
   border-radius: 18px;
   background: white;
   box-shadow: 0 24px 80px #190e0e48;
@@ -1948,6 +1949,7 @@ img {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow-y: auto;
 }
 .auth-brand {
   margin-bottom: 30px;
@@ -1981,6 +1983,65 @@ img {
 .auth-form-side input {
   height: 39px;
   padding: 0 11px;
+}
+.account-type-fieldset {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.account-type-fieldset legend {
+  padding: 0;
+  margin-bottom: 6px;
+  color: #766e65;
+  font-size: 10px;
+  font-weight: 700;
+}
+.account-type-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid #eee8e1;
+  border-radius: 9px;
+  background: #fff;
+  text-align: left;
+  color: #857d74;
+}
+.account-type-card.selected {
+  border-color: #f28b72;
+  background: #fff7f3;
+  color: var(--coral-dark);
+  box-shadow: 0 0 0 2px #f28b7214;
+}
+.account-type-card > svg {
+  flex: 0 0 auto;
+}
+.account-type-card span {
+  display: grid;
+  gap: 2px;
+}
+.account-type-card b {
+  color: var(--ink);
+  font-size: 10px;
+}
+.account-type-card small,
+.seller-registration-fields label small {
+  color: #a39a90;
+  font-size: 8px;
+  font-weight: 400;
+}
+.seller-registration-fields {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #f0e9e1;
+  border-radius: 10px;
+  background: #fffcf8;
 }
 .auth-submit {
   margin-top: 2px;
@@ -2667,13 +2728,209 @@ img {
   outline: 0;
 }
 .restaurant-cols {
-  grid-template-columns: 1.5fr 1.3fr 0.6fr 0.7fr 25px;
+  grid-template-columns: 1.35fr 1.1fr 0.55fr 0.65fr 1fr 25px;
 }
 .food-cols {
   grid-template-columns: 1.4fr 1.1fr 0.6fr 0.55fr 25px;
 }
 .user-cols {
-  grid-template-columns: 1.1fr 1.6fr 0.65fr 0.8fr;
+  grid-template-columns: 1.1fr 1.45fr 1fr 0.8fr 0.8fr;
+}
+.owner-page {
+  padding-bottom: 72px;
+}
+.owner-restaurants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+.owner-restaurant {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px 13px;
+  color: var(--ink);
+  font-size: 12px;
+}
+.owner-restaurant > svg {
+  color: var(--coral);
+}
+.owner-orders-panel {
+  padding: 20px;
+}
+.owner-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #faf7f2;
+}
+.owner-tabs button {
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  padding: 7px 11px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+.owner-tabs button.active {
+  color: var(--coral-dark);
+  background: #fff;
+  box-shadow: 0 2px 8px #60442a12;
+}
+.owner-menu-content {
+  display: grid;
+  gap: 18px;
+}
+.owner-food-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid #eee9e3;
+  border-radius: 12px;
+  background: #fffcf8;
+}
+.owner-food-form label {
+  display: grid;
+  gap: 6px;
+  color: #756d64;
+  font-size: 10px;
+  font-weight: 700;
+}
+.owner-food-form input:not([type='checkbox']),
+.owner-food-form select {
+  width: 100%;
+  min-width: 0;
+  height: 37px;
+  border: 1px solid #eae4dd;
+  border-radius: 7px;
+  background: #fff;
+  padding: 0 9px;
+  color: var(--ink);
+  font-size: 11px;
+  outline: 0;
+}
+.owner-food-form input:focus,
+.owner-food-form select:focus {
+  border-color: #ee957d;
+  box-shadow: 0 0 0 3px #f2765b16;
+}
+.owner-food-description {
+  grid-column: span 2;
+}
+.owner-veg-choice {
+  display: flex !important;
+  align-items: center;
+  gap: 8px !important;
+}
+.owner-veg-choice input {
+  accent-color: var(--green);
+}
+.owner-food-form .btn {
+  align-self: end;
+}
+.owner-food-list {
+  display: grid;
+}
+.owner-food-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 4px;
+  border-bottom: 1px solid #f0ece7;
+}
+.owner-food-row > div {
+  display: grid;
+  gap: 4px;
+}
+.owner-food-row b {
+  color: var(--ink);
+  font-size: 12px;
+}
+.owner-food-row small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.owner-order-list {
+  display: grid;
+  gap: 12px;
+}
+.owner-order-card {
+  border: 1px solid #eee9e3;
+  border-radius: 13px;
+  padding: 16px;
+  background: #fffdfa;
+}
+.owner-order-heading,
+.owner-order-meta,
+.owner-order-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.owner-order-heading h3 {
+  margin: 4px 0 0;
+  font:
+    700 17px 'Manrope',
+    sans-serif;
+}
+.owner-order-meta {
+  margin: 13px 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.owner-order-meta b {
+  color: var(--ink);
+  text-align: right;
+}
+.owner-order-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  border-top: 1px solid #f0ece7;
+  border-bottom: 1px solid #f0ece7;
+}
+.owner-order-card li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 12px;
+  color: var(--ink);
+}
+.owner-delivery-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.owner-delivery-address svg {
+  flex: 0 0 auto;
+  color: var(--coral);
+}
+.owner-order-footer {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.owner-order-footer select,
+.table-row select {
+  border: 1px solid #eae4dd;
+  border-radius: 7px;
+  background: white;
+  color: var(--ink);
+  padding: 7px 9px;
+  font: inherit;
 }
 .table-restaurant,
 .table-user {

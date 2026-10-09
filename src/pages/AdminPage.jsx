@@ -68,8 +68,18 @@ function Admin() {
   };
   const setRestaurantOpen = async (restaurant) => {
     try {
-      await api.patch(`/admin/restaurants/${restaurant._id}`, { isOpen: !restaurant.isOpen });
-      toast(restaurant.isOpen ? 'Restaurant paused' : 'Restaurant is open');
+      const approving = !restaurant.isApproved;
+      await api.patch(`/admin/restaurants/${restaurant._id}`, {
+        isOpen: approving ? true : !restaurant.isOpen,
+        isApproved: true,
+      });
+      toast(
+        approving
+          ? 'Restaurant approved and open.'
+          : restaurant.isOpen
+            ? 'Restaurant paused.'
+            : 'Restaurant is open.',
+      );
       await reload();
     } catch (error) {
       toast(error.response?.data?.message || 'Could not update restaurant availability', 'error');
@@ -82,6 +92,26 @@ function Admin() {
       await reload();
     } catch (error) {
       toast(error.response?.data?.message || 'Could not update food availability', 'error');
+    }
+  };
+  const setRestaurantOwner = async (restaurant, ownerId) => {
+    try {
+      await api.patch(`/admin/restaurants/${restaurant._id}/owner`, { ownerId: ownerId || null });
+      toast(ownerId ? 'Restaurant owner assigned.' : 'Restaurant owner removed.');
+      await reload();
+    } catch (error) {
+      toast(error.response?.data?.message || 'Could not assign this restaurant.', 'error');
+    }
+  };
+  const setUserRole = async (user, role) => {
+    try {
+      await api.patch(`/admin/users/${user._id}`, { role });
+      toast(
+        `${user.name} is now ${role === 'restaurant_owner' ? 'a restaurant owner' : 'a customer'}. They should sign in again.`,
+      );
+      await reload();
+    } catch (error) {
+      toast(error.response?.data?.message || 'Could not update this account role.', 'error');
     }
   };
   const removeRestaurant = async (restaurant) => {
@@ -227,6 +257,7 @@ function Admin() {
                       <span>Cuisine</span>
                       <span>Rating</span>
                       <span>Visibility</span>
+                      <span>Restaurant owner</span>
                       <span />
                     </div>
                     {restaurants.map((r) => (
@@ -246,8 +277,22 @@ function Admin() {
                           aria-checked={r.isOpen}
                           onClick={() => setRestaurantOpen(r)}
                         >
-                          {r.isOpen ? 'Open' : 'Closed'}
+                          {!r.isApproved ? 'Review' : r.isOpen ? 'Open' : 'Closed'}
                         </button>
+                        <select
+                          value={r.owner?._id || ''}
+                          onChange={(event) => setRestaurantOwner(r, event.target.value)}
+                          aria-label={`Assign owner for ${r.name}`}
+                        >
+                          <option value="">Unassigned</option>
+                          {users
+                            .filter((u) => u.active && u.role === 'restaurant_owner')
+                            .map((u) => (
+                              <option key={u._id} value={u._id}>
+                                {u.name}
+                              </option>
+                            ))}
+                        </select>
                         <button
                           className="row-action"
                           title="Remove restaurant"
@@ -314,7 +359,7 @@ function Admin() {
                 <div className="admin-panel">
                   <div className="panel-title">
                     <div>
-                      <h3>Your customers</h3>
+                      <h3>Accounts and owners</h3>
                       <small>{users.length} Crumb accounts</small>
                     </div>
                   </div>
@@ -333,7 +378,16 @@ function Admin() {
                           <b>{u.name}</b>
                         </span>
                         <span>{u.email}</span>
-                        <span>{u.role}</span>
+                        <select
+                          value={u.role}
+                          disabled={u.role === 'admin'}
+                          onChange={(event) => setUserRole(u, event.target.value)}
+                          aria-label={`Set role for ${u.name}`}
+                        >
+                          <option value="customer">Customer</option>
+                          <option value="restaurant_owner">Restaurant owner</option>
+                          {u.role === 'admin' && <option value="admin">Admin</option>}
+                        </select>
                         <span>{new Date(u.createdAt).toLocaleDateString('en-IN')}</span>
                         <button
                           className="access-toggle"

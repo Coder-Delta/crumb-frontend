@@ -19,6 +19,7 @@ import { money } from '../utils/format.js';
 import Image from '../components/common/Image.jsx';
 import { useToast } from '../components/common/ToastProvider.jsx';
 import { useCurrentLocation } from '../hooks/useCurrentLocation.js';
+import { loadRazorpayCheckout } from '../services/razorpay.js';
 
 function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
   const toast = useToast();
@@ -30,8 +31,11 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
         : null,
     ),
     [locationDetails, setLocationDetails] = useState({}),
-    [payment, setPayment] = useState('card'),
+    [payment, setPayment] = useState('razorpay'),
     [placing, setPlacing] = useState(false),
+    [pendingPayment, setPendingPayment] = useState(() =>
+      localStorage.getItem('crumb-pending-payment'),
+    ),
     [success, setSuccess] = useState(null);
   useEffect(() => {
     if (user?.addresses?.[0]?.line && !address) setAddress(user.addresses[0].line);
@@ -58,24 +62,94 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
       toast('Please order from one restaurant at a time.', 'error');
       return;
     }
+    const isMongoId = (value) => /^[0-9a-f]{24}$/i.test(String(value || ''));
+    if (!isMongoId(restaurantId) || cart.some((item) => !isMongoId(item._id))) {
+      toast(
+        'These are preview dishes, so they can’t be ordered yet. Start MongoDB, run `npm run seed` in backend, then add the dishes again.',
+        'error',
+      );
+      return;
+    }
     if (address.trim().length < 8) {
       toast('Add a complete delivery address.', 'error');
       return;
     }
     setPlacing(true);
     try {
-      const { data } = await api.post('/orders', {
-        restaurantId,
-        items: cart.map((i) => ({ foodId: i._id, quantity: i.quantity })),
-        address: address.trim(),
-        deliveryLocation: deliveryLocation || undefined,
-        paymentMethod: payment,
-      });
+      const { data } =
+        payment === 'razorpay' && pendingPayment
+          ? await api.get(`/orders/${pendingPayment}/payment/retry`)
+          : await api.post('/orders', {
+              restaurantId,
+              items: cart.map((i) => ({ foodId: i._id, quantity: i.quantity })),
+              address: address.trim(),
+              deliveryLocation: deliveryLocation || undefined,
+              paymentMethod: payment,
+            });
+      let confirmedOrder = data.order;
+      if (payment === 'razorpay') {
+        if (!data.payment?.keyId || !data.payment?.orderId) {
+          throw new Error('Razorpay is not configured. Add your Razorpay keys in backend/.env.');
+        }
+        setPendingPayment(data.order._id);
+        localStorage.setItem('crumb-pending-payment', data.order._id);
+        const Razorpay = await loadRazorpayCheckout();
+        confirmedOrder = await new Promise((resolve, reject) => {
+          const checkout = new Razorpay({
+            key: data.payment.keyId,
+            amount: data.payment.amount,
+            currency: data.payment.currency,
+            name: 'Crumb',
+            description: `Order from ${data.order.restaurant?.name || 'Crumb'}`,
+            order_id: data.payment.orderId,
+            prefill: { name: user.name, email: user.email, contact: user.phone || '' },
+            theme: { color: '#f2765b' },
+            handler: async (response) => {
+              try {
+                const result = await api.post(`/orders/${data.order._id}/payment/verify`, response);
+                resolve(result.data.order);
+              } catch (error) {
+                reject(new Error(error.response?.data?.message || 'Payment verification failed.'));
+              }
+            },
+            modal: {
+              ondismiss: () =>
+                reject(new Error('Payment was not completed. Your order is still unpaid.')),
+            },
+          });
+          checkout.on('payment.failed', (event) => {
+            reject(
+              new Error(event.error?.description || 'Payment failed. Your order is still unpaid.'),
+            );
+          });
+          checkout.open();
+        });
+      }
+      setPendingPayment(null);
+      localStorage.removeItem('crumb-pending-payment');
       setCart([]);
-      setSuccess(data.order);
-      toast('Order placed! Good choice.');
+      setSuccess(confirmedOrder);
+      toast(
+        payment === 'cash'
+          ? 'Order placed! Good choice.'
+          : 'Payment verified. Your order is placed!',
+      );
     } catch (e) {
-      toast(e.response?.data?.message || 'Could not place your order.', 'error');
+      const validationError = e.response?.data?.errors?.[0];
+      toast(
+        validationError
+          ? `${validationError.field}: ${validationError.message}`
+          : e.response?.data?.message || 'Could not place your order.',
+        'error',
+      );
+      if (payment === 'razorpay' && e.response?.status === 503) {
+        setPendingPayment(null);
+        localStorage.removeItem('crumb-pending-payment');
+      }
+      if (e.response?.status === 404 && pendingPayment) {
+        setPendingPayment(null);
+        localStorage.removeItem('crumb-pending-payment');
+      }
     } finally {
       setPlacing(false);
     }
@@ -171,6 +245,7 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
                   {user.addresses.map((a, i) => (
                     <button
                       key={i}
+                      disabled={Boolean(pendingPayment)}
                       onClick={() => {
                         setAddress(a.line);
                         setDeliveryLocation(
@@ -200,12 +275,12 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
                 <textarea
                   placeholder="Flat / house number, street, landmark…"
                   value={address}
+                  disabled={Boolean(pendingPayment)}
                   onChange={(e) => {
                     setAddress(e.target.value);
                     setDeliveryLocation(null);
                     setLocationDetails({});
                     resetAccuracy();
-                    setSaved(false);
                   }}
                   rows="3"
                   maxLength="300"
@@ -216,7 +291,7 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
                   type="button"
                   className="location-button"
                   onClick={locateMe}
-                  disabled={locating}
+                  disabled={locating || Boolean(pendingPayment)}
                 >
                   {locating ? (
                     <span className="spinner coral-spinner" />
@@ -295,22 +370,28 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
               <div className="payment-options">
                 <button
                   type="button"
-                  onClick={() => setPayment('card')}
-                  className={payment === 'card' ? 'selected' : ''}
-                  aria-pressed={payment === 'card'}
+                  onClick={() => setPayment('razorpay')}
+                  disabled={Boolean(pendingPayment)}
+                  className={payment === 'razorpay' ? 'selected' : ''}
+                  aria-pressed={payment === 'razorpay'}
                 >
                   <span className="payment-icon">
                     <CreditCard size={18} />
                   </span>
                   <span>
-                    <b>Online payment · demo mode</b>
-                    <small>Payment gateway not connected</small>
+                    <b>Pay online with Razorpay</b>
+                    <small>UPI, cards, netbanking and wallets</small>
                   </span>
-                  {payment === 'card' ? <span className="radio on" /> : <span className="radio" />}
+                  {payment === 'razorpay' ? (
+                    <span className="radio on" />
+                  ) : (
+                    <span className="radio" />
+                  )}
                 </button>
                 <button
                   type="button"
                   onClick={() => setPayment('cash')}
+                  disabled={Boolean(pendingPayment)}
                   className={payment === 'cash' ? 'selected' : ''}
                   aria-pressed={payment === 'cash'}
                 >
@@ -323,7 +404,7 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
                 </button>
               </div>
               <div className="secure-note">
-                <span>🔒</span> Your payment information is encrypted and secure.
+                <span>🔒</span> Payment is securely processed by Razorpay.
               </div>
             </section>
           </div>
@@ -361,6 +442,7 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
                   </span>
                   <div className="quantity-control tiny">
                     <button
+                      disabled={Boolean(pendingPayment)}
                       onClick={() =>
                         setCart((c) =>
                           c
@@ -373,6 +455,7 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
                     </button>
                     <b>{i.quantity}</b>
                     <button
+                      disabled={Boolean(pendingPayment)}
                       onClick={() =>
                         setCart((c) =>
                           c.map((x) => (x._id === i._id ? { ...x, quantity: x.quantity + 1 } : x)),
@@ -419,7 +502,8 @@ function Checkout({ user, cart, setCart, refreshUser, onAuth }) {
                 </>
               ) : user ? (
                 <>
-                  Place order · {money(total)} <ArrowRight size={16} />
+                  {pendingPayment ? 'Retry online payment' : `Place order · ${money(total)}`}{' '}
+                  <ArrowRight size={16} />
                 </>
               ) : (
                 <>

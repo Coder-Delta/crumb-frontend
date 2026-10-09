@@ -8,6 +8,7 @@ import {
   Menu as MenuIcon,
   Search,
   ShoppingBag,
+  Store,
   Utensils,
   UserRound,
 } from 'lucide-react';
@@ -73,6 +74,15 @@ export default function SiteHeader({ user, cartCount, search, setSearch, signOut
           <kbd>{navigator.platform?.includes('Mac') ? '⌘ K' : 'Ctrl K'}</kbd>
         </div>
         <nav className="top-actions">
+          {['restaurant_owner', 'admin'].includes(user?.role) && (
+            <Link
+              className={`nav-link ${location.pathname === '/owner' ? 'selected' : ''}`}
+              to="/owner"
+            >
+              <Store size={17} />
+              <span>Order desk</span>
+            </Link>
+          )}
           <Link
             className={`nav-link ${location.pathname === '/orders' ? 'selected' : ''}`}
             to="/orders"
@@ -114,6 +124,11 @@ export default function SiteHeader({ user, cartCount, search, setSearch, signOut
           {user?.role === 'admin' && (
             <Link to="/admin" onClick={() => setMenuOpen(false)}>
               Admin dashboard
+            </Link>
+          )}
+          {user?.role === 'restaurant_owner' && (
+            <Link to="/owner" onClick={() => setMenuOpen(false)}>
+              Restaurant order desk
             </Link>
           )}
           {user && (

@@ -1,7 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function ProtectedRoute({ user, adminOnly = false, onSignIn, children }) {
+export default function ProtectedRoute({
+  user,
+  adminOnly = false,
+  allowedRoles,
+  onSignIn,
+  children,
+}) {
   if (!user) {
     return (
       <div className="page-container">
@@ -17,7 +23,7 @@ export default function ProtectedRoute({ user, adminOnly = false, onSignIn, chil
     );
   }
 
-  if (adminOnly && user.role !== 'admin') {
+  if ((adminOnly && user.role !== 'admin') || (allowedRoles && !allowedRoles.includes(user.role))) {
     return (
       <div className="page-container">
         <div className="empty-state">

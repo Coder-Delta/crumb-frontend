@@ -12,6 +12,7 @@ import AdminPage from './pages/AdminPage.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import OrdersPage, { OrderDetail } from './pages/OrdersPage.jsx';
+import OwnerPage from './pages/OwnerPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import RestaurantPage from './pages/RestaurantPage.jsx';
 import { api } from './services/api.js';
@@ -113,7 +114,14 @@ export default function App() {
     localStorage.setItem('crumb-user', JSON.stringify(authResponse.user));
     setUser(authResponse.user);
     setAuthOpen(false);
-    toast(`Welcome, ${authResponse.user.name.split(' ')[0]}!`);
+    if (authResponse.user.role === 'restaurant_owner') {
+      navigate('/owner');
+      toast(
+        `Welcome, ${authResponse.user.name.split(' ')[0]}! Your restaurant dashboard is ready.`,
+      );
+    } else {
+      toast(`Welcome, ${authResponse.user.name.split(' ')[0]}!`);
+    }
   };
 
   const refreshUser = async () => {
@@ -198,6 +206,18 @@ export default function App() {
             element={
               <ProtectedRoute user={user} adminOnly onSignIn={() => setAuthOpen(true)}>
                 <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/owner"
+            element={
+              <ProtectedRoute
+                user={user}
+                allowedRoles={['restaurant_owner', 'admin']}
+                onSignIn={() => setAuthOpen(true)}
+              >
+                <OwnerPage />
               </ProtectedRoute>
             }
           />

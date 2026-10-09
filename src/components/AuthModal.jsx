@@ -1,21 +1,36 @@
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, X, Utensils } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Store, X, Utensils } from 'lucide-react';
 import { api } from '../services/api.js';
 
 function AuthModal({ close, complete }) {
   const googleButton = useRef(null);
   const completeRef = useRef(complete);
   const [mode, setMode] = useState('login'),
-    [form, setForm] = useState({ name: '', email: '', password: '' }),
+    [accountType, setAccountType] = useState('buyer'),
+    [form, setForm] = useState({
+      name: '',
+      email: '',
+      password: '',
+      restaurantName: '',
+      cuisines: '',
+      restaurantAddress: '',
+      restaurantPhone: '',
+      restaurantDescription: '',
+    }),
     [busy, setBusy] = useState(false),
     [err, setErr] = useState('');
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   completeRef.current = complete;
 
   useEffect(() => {
-    if (!googleClientId || !googleButton.current) return undefined;
+    if (
+      !googleClientId ||
+      !googleButton.current ||
+      (mode === 'register' && accountType === 'seller')
+    )
+      return undefined;
 
     let active = true;
     const renderGoogleButton = () => {
@@ -60,14 +75,37 @@ function AuthModal({ close, complete }) {
       active = false;
       script?.removeEventListener('load', renderGoogleButton);
     };
-  }, [googleClientId]);
+  }, [googleClientId, mode, accountType]);
 
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true);
     setErr('');
     try {
-      const { data } = await api.post(`/auth/${mode === 'login' ? 'login' : 'register'}`, form);
+      const payload =
+        mode === 'login'
+          ? { email: form.email, password: form.password }
+          : {
+              name: form.name,
+              email: form.email,
+              password: form.password,
+              accountType,
+              ...(accountType === 'seller'
+                ? {
+                    restaurant: {
+                      name: form.restaurantName,
+                      cuisine: form.cuisines
+                        .split(',')
+                        .map((cuisine) => cuisine.trim())
+                        .filter(Boolean),
+                      address: form.restaurantAddress,
+                      contactPhone: form.restaurantPhone,
+                      description: form.restaurantDescription,
+                    },
+                  }
+                : {}),
+            };
+      const { data } = await api.post(`/auth/${mode === 'login' ? 'login' : 'register'}`, payload);
       complete(data);
     } catch (e) {
       setErr(
@@ -120,22 +158,113 @@ function AuthModal({ close, complete }) {
           <p className="auth-subtitle">
             {mode === 'login'
               ? 'Sign in to get back to the good stuff.'
-              : 'A little account makes ordering a lot easier.'}
+              : accountType === 'seller'
+                ? 'Set up your restaurant partner account.'
+                : 'A little account makes ordering a lot easier.'}
           </p>
           <form onSubmit={submit}>
             {mode === 'register' && (
-              <label>
-                Your name
-                <input
-                  required
-                  minLength="2"
-                  maxLength="80"
-                  autoComplete="name"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="Alex Morgan"
-                />
-              </label>
+              <>
+                <fieldset className="account-type-fieldset">
+                  <legend>I’m here to</legend>
+                  <button
+                    className={`account-type-card ${accountType === 'buyer' ? 'selected' : ''}`}
+                    type="button"
+                    aria-pressed={accountType === 'buyer'}
+                    onClick={() => setAccountType('buyer')}
+                  >
+                    <ShoppingBag size={17} />
+                    <span>
+                      <b>Order food</b>
+                      <small>Buyer account</small>
+                    </span>
+                  </button>
+                  <button
+                    className={`account-type-card ${accountType === 'seller' ? 'selected' : ''}`}
+                    type="button"
+                    aria-pressed={accountType === 'seller'}
+                    onClick={() => setAccountType('seller')}
+                  >
+                    <Store size={17} />
+                    <span>
+                      <b>Sell food</b>
+                      <small>Restaurant partner</small>
+                    </span>
+                  </button>
+                </fieldset>
+                <label>
+                  Your name
+                  <input
+                    required
+                    minLength="2"
+                    maxLength="80"
+                    autoComplete="name"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="Alex Morgan"
+                  />
+                </label>
+                {accountType === 'seller' && (
+                  <div className="seller-registration-fields">
+                    <label>
+                      Restaurant name
+                      <input
+                        required
+                        minLength="2"
+                        maxLength="120"
+                        value={form.restaurantName}
+                        onChange={(e) => setForm({ ...form, restaurantName: e.target.value })}
+                        placeholder="Your restaurant name"
+                      />
+                    </label>
+                    <label>
+                      Cuisine types <small>Separate with commas</small>
+                      <input
+                        required
+                        value={form.cuisines}
+                        onChange={(e) => setForm({ ...form, cuisines: e.target.value })}
+                        placeholder="Indian, Bengali"
+                      />
+                    </label>
+                    <label>
+                      Restaurant address
+                      <input
+                        required
+                        minLength="5"
+                        maxLength="250"
+                        autoComplete="street-address"
+                        value={form.restaurantAddress}
+                        onChange={(e) => setForm({ ...form, restaurantAddress: e.target.value })}
+                        placeholder="Street, area, city"
+                      />
+                    </label>
+                    <label>
+                      Restaurant phone
+                      <input
+                        required
+                        minLength="7"
+                        maxLength="30"
+                        type="tel"
+                        autoComplete="tel"
+                        value={form.restaurantPhone}
+                        onChange={(e) => setForm({ ...form, restaurantPhone: e.target.value })}
+                        placeholder="Business contact number"
+                      />
+                    </label>
+                    <label>
+                      A little about your restaurant <small>Optional</small>
+                      <input
+                        maxLength="500"
+                        value={form.restaurantDescription}
+                        onChange={(e) =>
+                          setForm({ ...form, restaurantDescription: e.target.value })
+                        }
+                        placeholder="What makes your food special?"
+                      />
+                    </label>
+                  </div>
+                )}
+              </>
             )}
             <label>
               Email address
@@ -175,13 +304,23 @@ function AuthModal({ close, complete }) {
               <ArrowRight size={15} />
             </button>
           </form>
-          <div className="auth-divider">
-            <span>or continue with</span>
-          </div>
-          {googleClientId ? (
-            <div className="google-signin" ref={googleButton} aria-label="Continue with Google" />
-          ) : (
-            <p className="google-setup-note">Google sign-in will be available after OAuth setup.</p>
+          {(mode === 'login' || accountType === 'buyer') && (
+            <>
+              <div className="auth-divider">
+                <span>or continue with</span>
+              </div>
+              {googleClientId ? (
+                <div
+                  className="google-signin"
+                  ref={googleButton}
+                  aria-label="Continue with Google"
+                />
+              ) : (
+                <p className="google-setup-note">
+                  Google sign-in will be available after OAuth setup.
+                </p>
+              )}
+            </>
           )}
           <div className="auth-switch">
             {mode === 'login' ? (

@@ -43,12 +43,20 @@ function Profile({ user, onSave, signOut }) {
           <h3>{user?.name}</h3>
           <span>{user?.email}</span>
           {user?.role === 'admin' && <span className="admin-pill">ADMIN</span>}
+          {user?.role === 'restaurant_owner' && (
+            <span className="admin-pill">RESTAURANT OWNER</span>
+          )}
           <Link to="/orders" className="profile-side-link">
             <ClipboardList size={16} /> Your orders <ArrowRight size={14} />
           </Link>
           {user?.role === 'admin' && (
             <Link to="/admin" className="profile-side-link">
               <LayoutDashboard size={16} /> Admin dashboard <ArrowRight size={14} />
+            </Link>
+          )}
+          {user?.role === 'restaurant_owner' && (
+            <Link to="/owner" className="profile-side-link">
+              <LayoutDashboard size={16} /> Restaurant order desk <ArrowRight size={14} />
             </Link>
           )}
           <button className="profile-signout" onClick={signOut}>
