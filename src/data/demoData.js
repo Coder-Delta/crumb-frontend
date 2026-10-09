@@ -1,0 +1,173 @@
+export const categories = [
+  ['All', '✨'],
+  ['Pizza', '🍕'],
+  ['Burgers', '🍔'],
+  ['Biryani', '🍛'],
+  ['Healthy', '🥗'],
+  ['Asian', '🍜'],
+  ['Mexican', '🌮'],
+  ['Dessert', '🍰'],
+  ['Breakfast', '🥞'],
+  ['Cafe', '☕'],
+];
+
+export const demoRestaurants = [
+  {
+    _id: 'demo1',
+    name: 'Little Sicily',
+    slug: 'little-sicily',
+    cuisine: ['Italian', 'Pizza'],
+    description:
+      'Hand-stretched dough, slow-simmered sauces, and the kind of pasta that feels like Sunday at nonna’s.',
+    image:
+      'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=85',
+    rating: 4.8,
+    ratingCount: 2400,
+    deliveryTime: '20–30 min',
+    deliveryFee: 29,
+    priceForTwo: 650,
+    promoted: true,
+    tags: ['Bestsellers', 'Italian'],
+  },
+  {
+    _id: 'demo2',
+    name: 'The Green Fork',
+    slug: 'the-green-fork',
+    cuisine: ['Healthy', 'Salads'],
+    description: 'Feel-good bowls, crisp greens, and ingredients that do the most.',
+    image:
+      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1000&q=85',
+    rating: 4.6,
+    ratingCount: 980,
+    deliveryTime: '15–25 min',
+    deliveryFee: 0,
+    priceForTwo: 450,
+    tags: ['Healthy', 'Vegetarian'],
+  },
+  {
+    _id: 'demo3',
+    name: 'Naan & Done',
+    slug: 'naan-and-done',
+    cuisine: ['Indian', 'North Indian'],
+    description: 'Slow-cooked classics, buttery naans, and all the good bits.',
+    image:
+      'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=1000&q=85',
+    rating: 4.9,
+    ratingCount: 3500,
+    deliveryTime: '30–40 min',
+    deliveryFee: 0,
+    priceForTwo: 550,
+    promoted: true,
+    tags: ['Indian', 'Comfort food'],
+  },
+  {
+    _id: 'demo4',
+    name: 'Miso Hungry',
+    slug: 'miso-hungry',
+    cuisine: ['Japanese', 'Asian'],
+    description: 'Bright, balanced Japanese comfort bowls made fresh to order.',
+    image:
+      'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1000&q=85',
+    rating: 4.7,
+    ratingCount: 1800,
+    deliveryTime: '25–35 min',
+    deliveryFee: 39,
+    priceForTwo: 520,
+    tags: ['Asian', 'Healthy'],
+  },
+];
+
+export const demoMenu = [
+  {
+    _id: 'dish1',
+    name: 'Truffle mushroom pizza',
+    description: 'A crisp, airy crust with wild mushrooms, mozzarella & truffle oil.',
+    price: 449,
+    image:
+      'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=700&q=85',
+    category: 'Pizza',
+    veg: true,
+    bestseller: true,
+    restaurant: 'demo1',
+  },
+  {
+    _id: 'dish2',
+    name: 'Burrata pomodoro',
+    description: 'Creamy burrata over sweet cherry tomato sugo and fresh basil.',
+    price: 389,
+    image:
+      'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=700&q=85',
+    category: 'Pasta',
+    veg: true,
+    bestseller: true,
+    restaurant: 'demo1',
+  },
+  {
+    _id: 'dish3',
+    name: 'Classic margherita',
+    description: 'San Marzano tomato, fior di latte, fresh basil.',
+    price: 329,
+    image:
+      'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=700&q=85',
+    category: 'Pizza',
+    veg: true,
+    restaurant: 'demo1',
+  },
+  {
+    _id: 'dish4',
+    name: 'Harvest glow bowl',
+    description: 'Roasted sweet potato, avocado, quinoa, greens & tahini.',
+    price: 329,
+    image:
+      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=700&q=85',
+    category: 'Power bowls',
+    veg: true,
+    bestseller: true,
+    restaurant: 'demo2',
+  },
+  {
+    _id: 'dish5',
+    name: 'Butter chicken',
+    description: 'Tandoor chicken in a velvety tomato & fenugreek gravy.',
+    price: 399,
+    image:
+      'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=700&q=85',
+    category: 'Mains',
+    bestseller: true,
+    restaurant: 'demo3',
+  },
+  {
+    _id: 'dish6',
+    name: 'Garlic butter naan',
+    description: 'Soft, blistered naan brushed with garlic butter.',
+    price: 89,
+    image:
+      'https://images.unsplash.com/photo-1585854341625-f33ee10dbf94?auto=format&fit=crop&w=700&q=85',
+    category: 'Breads',
+    veg: true,
+    restaurant: 'demo3',
+  },
+  {
+    _id: 'dish7',
+    name: 'Salmon poke bowl',
+    description: 'Sushi rice, sashimi salmon, avocado, cucumber, spicy mayo.',
+    price: 469,
+    image:
+      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=85',
+    category: 'Poke bowls',
+    bestseller: true,
+    restaurant: 'demo4',
+  },
+  {
+    _id: 'dish8',
+    name: 'Crispy tofu ramen',
+    description: 'Rich miso broth, springy noodles, crispy tofu & greens.',
+    price: 389,
+    image:
+      'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=700&q=85',
+    category: 'Ramen',
+    veg: true,
+    bestseller: true,
+    restaurant: 'demo4',
+  },
+];
