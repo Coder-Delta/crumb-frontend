@@ -87,7 +87,7 @@ function OrderCard({ order }) {
   );
 }
 
-function OrderDetail() {
+function OrderDetail({ notification }) {
   const { id } = useParams(),
     [order, setOrder] = useState(null),
     [error, setError] = useState('');
@@ -104,7 +104,7 @@ function OrderDetail() {
       alive = false;
       clearInterval(timer);
     };
-  }, [id]);
+  }, [id, notification?._id]);
   const stages = ['placed', 'confirmed', 'preparing', 'on_the_way', 'delivered'];
   if (error)
     return (

@@ -7,6 +7,8 @@
 
 For the containerized full stack, use the root `compose.yml` and open `http://localhost:8080`; Nginx serves the frontend and proxies `/api` to the backend container.
 
+Signed-in customers and restaurant owners get live order alerts in the header notification menu. The notification list is persisted by the API and reloads when they sign back in; browser push notifications while the app is closed are not enabled.
+
 For Google sign-in, create a Google OAuth **Web application** client, allow `http://localhost` and `http://localhost:5173` as authorized JavaScript origins, and copy its client ID to `VITE_GOOGLE_CLIENT_ID` in `.env`. Configure the same value as `GOOGLE_CLIENT_ID` in `../backend/.env`, then restart both servers. See `../backend/README.md` for details.
 
 For a production bundle, run `npm run build` and deploy `dist/` with the backend API URL configured at build time. Demo accounts: `hello@crumb.demo` / `crumb123`; admin `admin@crumb.demo` / `admin123`; restaurant owner `owner@crumb.demo` / `owner123` (Little Sicily). Razorpay Checkout uses the public key ID returned from the backend; add the private test keys to `backend/.env` as described in `../backend/README.md`.

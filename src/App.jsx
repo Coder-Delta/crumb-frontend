@@ -17,6 +17,7 @@ import ProfilePage from './pages/ProfilePage.jsx';
 import RestaurantPage from './pages/RestaurantPage.jsx';
 import { api } from './services/api.js';
 import { filterDemoRestaurants } from './utils/filterDemoRestaurants.js';
+import { useNotifications } from './hooks/useNotifications.js';
 
 export default function App() {
   const [user, setUser] = useState(() => readStoredValue('crumb-user'));
@@ -35,6 +36,7 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
+  const notificationState = useNotifications(user, toast);
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
@@ -142,6 +144,10 @@ export default function App() {
         setSearch={setSearch}
         signOut={signOut}
         onSignIn={() => setAuthOpen(true)}
+        notifications={notificationState.notifications}
+        unreadCount={notificationState.unreadCount}
+        onNotificationRead={notificationState.markAsRead}
+        onNotificationsRead={notificationState.markAllAsRead}
       />
 
       <AnimatePresence mode="wait">
@@ -189,7 +195,7 @@ export default function App() {
             path="/orders/:id"
             element={
               <ProtectedRoute user={user} onSignIn={() => setAuthOpen(true)}>
-                <OrderDetail />
+                <OrderDetail notification={notificationState.lastNotification} />
               </ProtectedRoute>
             }
           />
@@ -217,7 +223,7 @@ export default function App() {
                 allowedRoles={['restaurant_owner', 'admin']}
                 onSignIn={() => setAuthOpen(true)}
               >
-                <OwnerPage />
+                <OwnerPage notification={notificationState.lastNotification} />
               </ProtectedRoute>
             }
           />

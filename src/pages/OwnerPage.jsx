@@ -15,7 +15,7 @@ const nextSteps = {
   cancelled: [],
 };
 
-function OwnerPage() {
+function OwnerPage({ notification }) {
   const toast = useToast();
   const [restaurants, setRestaurants] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -56,6 +56,10 @@ function OwnerPage() {
     const interval = window.setInterval(() => reload(true), 15000);
     return () => window.clearInterval(interval);
   }, [reload]);
+
+  useEffect(() => {
+    if (['new_order', 'order_cancelled'].includes(notification?.type)) reload(true);
+  }, [notification, reload]);
 
   const updateStatus = async (order, status) => {
     try {
