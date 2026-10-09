@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { api } from '../services/api.js';
 import { money } from '../utils/format.js';
+import Image from '../components/common/Image.jsx';
 import { useToast } from '../components/common/ToastProvider.jsx';
 import { useCurrentLocation } from '../hooks/useCurrentLocation.js';
 
