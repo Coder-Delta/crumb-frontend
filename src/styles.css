@@ -4185,3 +4185,525 @@ img {
   font-size: 10px;
   font-weight: 700;
 }
+
+/* Responsive layout refinements */
+html {
+  scroll-padding-top: 82px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+@media (max-width: 900px) {
+  .checkout-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .checkout-summary {
+    position: static;
+  }
+
+  .menu-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cart-preview {
+    position: static;
+  }
+
+  .admin-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-sidebar {
+    position: static;
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .admin-sidebar::-webkit-scrollbar,
+  .menu-tabs::-webkit-scrollbar,
+  .owner-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-sidebar > button,
+  .admin-back {
+    flex: 0 0 auto;
+  }
+
+  .profile-layout {
+    grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  }
+
+  .owner-food-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .topbar-inner {
+    gap: clamp(6px, 2vw, 12px);
+    padding-inline: max(12px, env(safe-area-inset-left));
+  }
+
+  .top-actions {
+    gap: 8px;
+  }
+
+  .notification-toggle,
+  .mobile-menu,
+  .bag-button {
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .notification-panel {
+    top: calc(65px + env(safe-area-inset-top));
+    left: 8px;
+    right: 8px;
+    max-height: calc(100dvh - 80px - env(safe-area-inset-top));
+    border-radius: 14px;
+  }
+
+  .notification-list {
+    max-height: calc(100dvh - 154px - env(safe-area-inset-top));
+  }
+
+  .mobile-dropdown {
+    right: max(10px, env(safe-area-inset-right));
+    top: 58px;
+    z-index: 25;
+    min-width: 190px;
+    padding: 8px;
+  }
+
+  .mobile-dropdown > a,
+  .mobile-dropdown > button {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+  }
+
+  .page-container {
+    padding-inline: 14px;
+  }
+
+  .hero {
+    min-height: 370px;
+    border-radius: 18px;
+  }
+
+  .hero h1 {
+    font-size: clamp(46px, 12vw, 58px);
+  }
+
+  .hero-copy > p,
+  .page-title p,
+  .restaurant-profile p {
+    font-size: 13px;
+  }
+
+  .hero-search input,
+  .nav-search input {
+    font-size: 13px;
+  }
+
+  .hero-search button,
+  .btn {
+    min-height: 42px;
+    font-size: 12px;
+  }
+
+  .section-kicker,
+  .eyebrow {
+    font-size: 10px;
+  }
+
+  .perks b,
+  .perk-promo b {
+    font-size: 11px;
+  }
+
+  .perks small,
+  .perk-promo small {
+    font-size: 9px;
+  }
+
+  .category-row {
+    gap: 10px;
+    scroll-snap-type: x proximity;
+  }
+
+  .category-card {
+    min-width: 78px;
+    height: 91px;
+    scroll-snap-align: start;
+  }
+
+  .category-card b,
+  .restaurant-meta {
+    font-size: 10px;
+  }
+
+  .restaurant-grid {
+    gap: 12px;
+  }
+
+  .restaurant-image {
+    height: clamp(118px, 34vw, 178px);
+  }
+
+  .restaurant-content {
+    padding: 10px;
+  }
+
+  .restaurant-name-row h3 {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .rating,
+  .cuisine-line {
+    font-size: 10px;
+  }
+
+  .filter-chip,
+  .filters label {
+    min-height: 36px;
+    height: auto;
+    padding-inline: 10px;
+    font-size: 11px;
+  }
+
+  .restaurant-profile {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .restaurant-profile h1 {
+    font-size: clamp(26px, 7vw, 32px);
+    line-height: 1.12;
+  }
+
+  .restaurant-facts {
+    row-gap: 8px;
+  }
+
+  .restaurant-facts,
+  .restaurant-facts > span:not(.rating),
+  .restaurant-facts .rating {
+    font-size: 11px;
+  }
+
+  .menu-tabs {
+    margin-inline: -14px;
+    padding-inline: 14px;
+    scroll-snap-type: x proximity;
+  }
+
+  .menu-tabs button {
+    min-height: 38px;
+    padding-inline: 12px;
+    font-size: 11px;
+    scroll-snap-align: start;
+  }
+
+  .food-row {
+    min-height: 120px;
+    gap: 10px;
+  }
+
+  .food-copy h4 {
+    font-size: 14px;
+  }
+
+  .food-copy p {
+    font-size: 11px;
+  }
+
+  .food-price {
+    font-size: 12px;
+  }
+
+  .add-food,
+  .quantity-control {
+    min-height: 34px;
+  }
+
+  .checkout-card,
+  .checkout-summary,
+  .tracking-card {
+    border-radius: 13px;
+  }
+
+  .checkout-section-title h2,
+  .tracking-head h2 {
+    font-size: 15px;
+  }
+
+  .checkout-section-title p,
+  .field-label,
+  .field-label textarea,
+  .field-label input {
+    font-size: 12px;
+  }
+
+  .field-label input,
+  .field-label textarea,
+  .owner-food-form input:not([type='checkbox']),
+  .owner-food-form select {
+    min-height: 42px;
+    font-size: 14px;
+  }
+
+  .location-button {
+    min-height: 42px;
+    font-size: 12px;
+  }
+
+  .location-found,
+  .location-attribution {
+    font-size: 11px;
+  }
+
+  .payment-options > button {
+    min-height: 60px;
+  }
+
+  .summary-item-name,
+  .bill-lines,
+  .bill-total {
+    font-size: 12px;
+  }
+
+  .order-card {
+    gap: 11px;
+    padding: 12px;
+  }
+
+  .order-name h3 {
+    font-size: 13px;
+  }
+
+  .order-main > p,
+  .order-main > small {
+    font-size: 11px;
+  }
+
+  .order-status {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .tracking-step small {
+    max-width: 62px;
+    font-size: 9px;
+    line-height: 1.3;
+  }
+
+  .profile-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .profile-aside {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+    column-gap: 12px;
+    align-items: center;
+  }
+
+  .profile-avatar {
+    grid-row: span 2;
+  }
+
+  .profile-aside h3 {
+    margin: 0;
+  }
+
+  .profile-aside > span,
+  .profile-aside .admin-pill {
+    grid-column: 2;
+    margin-top: 0;
+  }
+
+  .profile-side-link,
+  .profile-signout {
+    grid-column: 1 / -1;
+    max-width: none;
+    min-height: 42px;
+    margin-top: 8px;
+    padding-top: 8px;
+    font-size: 12px;
+  }
+
+  .admin-sidebar > button,
+  .admin-back {
+    min-height: 40px;
+    font-size: 11px;
+  }
+
+  .stat-card > span,
+  .stat-foot {
+    font-size: 10px;
+  }
+
+  .panel-title h3 {
+    font-size: 14px;
+  }
+
+  .panel-title small,
+  .admin-table {
+    font-size: 10px;
+  }
+
+  .table-header,
+  .table-row {
+    min-width: 650px;
+  }
+
+  .table-row {
+    min-height: 58px;
+    font-size: 11px;
+  }
+
+  .table-row select {
+    min-height: 38px;
+    font-size: 11px;
+  }
+
+  .owner-orders-panel {
+    padding: 14px;
+  }
+
+  .owner-tabs {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .owner-tabs button {
+    min-height: 38px;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+
+  .owner-food-form {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 12px;
+  }
+
+  .owner-food-description {
+    grid-column: auto;
+  }
+
+  .owner-order-card {
+    min-width: 0;
+    padding: 13px;
+  }
+
+  .owner-order-heading h3 {
+    font-size: 14px;
+  }
+
+  .owner-order-meta,
+  .owner-order-card li,
+  .owner-delivery-address {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .auth-form-side label,
+  .auth-form-side form label {
+    font-size: 12px;
+  }
+
+  .auth-form-side input {
+    min-height: 42px;
+    font-size: 14px;
+  }
+
+  .footer-inner {
+    padding-bottom: max(13px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 420px) {
+  .page-container {
+    padding-inline: 12px;
+  }
+
+  .hero {
+    min-height: 356px;
+  }
+
+  .hero-copy {
+    padding-inline: 17px;
+  }
+
+  .hero-social {
+    gap: 8px;
+  }
+
+  .hero-free {
+    font-size: 10px;
+  }
+
+  .restaurant-grid {
+    gap: 9px;
+  }
+
+  .restaurant-image {
+    height: 116px;
+  }
+
+  .restaurant-content {
+    padding: 8px;
+  }
+
+  .restaurant-name-row h3 {
+    font-size: 12px;
+  }
+
+  .restaurant-meta {
+    gap: 3px;
+    font-size: 9px;
+  }
+
+  .tracking-step small {
+    font-size: 8px;
+  }
+
+  .checkout-card {
+    padding: 13px;
+  }
+
+  .auth-form-side {
+    padding-inline: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
