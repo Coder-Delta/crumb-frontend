@@ -4,6 +4,7 @@ import { ArrowDownWideNarrow, MapPin, Plus, Store } from 'lucide-react';
 import { api } from '../services/api.js';
 import { money } from '../utils/format.js';
 import { useToast } from '../components/common/ToastProvider.jsx';
+import FoodImageOptions, { FOOD_IMAGE_LIST_ID } from '../components/common/FoodImageOptions.jsx';
 
 const nextSteps = {
   placed: ['confirmed', 'cancelled'],
@@ -214,13 +215,15 @@ function OwnerPage() {
                 />
               </label>
               <label className="owner-food-description">
-                Image URL <small>Optional</small>
+                Image path or URL <small>Optional</small>
                 <input
-                  type="url"
+                  type="text"
+                  list={FOOD_IMAGE_LIST_ID}
                   value={foodForm.image}
                   onChange={(event) => setFoodForm({ ...foodForm, image: event.target.value })}
-                  placeholder="https://…"
+                  placeholder="/images/food/... or https://..."
                 />
+                <FoodImageOptions />
               </label>
               <label className="owner-veg-choice">
                 <input

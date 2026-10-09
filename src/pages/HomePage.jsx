@@ -87,7 +87,7 @@ function Home({ restaurants, loading, search, setSearch, filters, setFilters, ad
         <div className="hero-visual">
           <div className="hero-photo-frame">
             <Image
-              src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1100&q=90"
+              src="/images/food/photo-1547592180-85f173990554.jpg"
               alt="A colorful table of fresh food"
             />
           </div>

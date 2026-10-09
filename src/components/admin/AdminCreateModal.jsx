@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, X } from 'lucide-react';
 import { api } from '../../services/api.js';
 import { useToast } from '../common/ToastProvider.jsx';
+import FoodImageOptions, { FOOD_IMAGE_LIST_ID } from '../common/FoodImageOptions.jsx';
 
 function AdminCreate({ type, restaurants, close, done }) {
   const toast = useToast();
@@ -106,14 +107,16 @@ function AdminCreate({ type, restaurants, close, done }) {
                 />
               </label>
               <label>
-                Image URL
+                Image path or URL
                 <input
                   required
-                  type="url"
+                  type="text"
+                  list={FOOD_IMAGE_LIST_ID}
                   value={form.image}
                   onChange={(e) => change('image', e.target.value)}
-                  placeholder="https://…"
+                  placeholder="/images/food/... or https://..."
                 />
+                <FoodImageOptions />
               </label>
               <label>
                 Description
@@ -169,14 +172,16 @@ function AdminCreate({ type, restaurants, close, done }) {
                 />
               </label>
               <label>
-                Image URL
+                Image path or URL
                 <input
                   required
-                  type="url"
+                  type="text"
+                  list={FOOD_IMAGE_LIST_ID}
                   value={form.image}
                   onChange={(e) => change('image', e.target.value)}
-                  placeholder="https://…"
+                  placeholder="/images/food/... or https://..."
                 />
+                <FoodImageOptions />
               </label>
               <label>
                 Description
